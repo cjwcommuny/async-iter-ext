@@ -1,6 +1,6 @@
 mod dedup;
 
-use dedup::dedup_by;
+use dedup::dedup_first_by;
 pub use dedup::Dedup;
 use futures::Stream;
 
@@ -16,6 +16,6 @@ impl<S: Stream> StreamTools for S {
     where
         F: FnMut(&Self::Item, &Self::Item) -> bool,
     {
-        dedup_by(self, is_equal)
+        dedup_first_by(self, is_equal)
     }
 }
