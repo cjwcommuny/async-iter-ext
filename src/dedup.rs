@@ -3,7 +3,7 @@ use std::mem;
 use std::pin::Pin;
 use std::task::{Context, Poll};
 
-use futures::stream::FilterMap;
+use futures::stream::{FilterMap, Fuse};
 use futures::{Stream, StreamExt};
 use pin_project::pin_project;
 
@@ -13,7 +13,7 @@ pub type Dedup<S, T, F> =
 #[pin_project]
 pub struct DedupFirstReturnNone<S, T, F> {
     #[pin]
-    inner: S,
+    inner: Fuse<S>,
 
     prev: Option<T>,
     is_equal: F,
@@ -63,7 +63,7 @@ where
 
     StreamExt::filter_map(
         DedupFirstReturnNone {
-            inner,
+            inner: inner.fuse(),
             prev: None,
             is_equal,
         },
